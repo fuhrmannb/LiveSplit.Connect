@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+package livesplit.connect;
+option csharp_namespace = "LiveSplit.Connect";
+
+import "google/protobuf/duration.proto";
+
+enum ComparisonMethod {
+  COMPARISON_METHOD_UNDEFINED = 0;
+  PERSONAL_BEST = 1;
+  BEST_SEGMENT = 2;
+  BEST_SPLIT_TIMES = 3;
+  AVERAGE_SEGMENTS = 4;
+  BALANCED_PB = 5;
+}
+
+enum TimerPhase {
+  TIMER_PHASE_UNDEFINED = 0;
+  NOT_RUNNING = 1;
+  RUNNING = 2;
+  PAUSED = 3;
+  ENDED = 4;
+}
+
+enum TimingMethod {
+  TIMING_METHOD_UNDEFINED = 0;
+  REAL_TIME = 1;
+  GAME_TIME = 2;
+}
+
+message Time {
+  google.protobuf.Duration real_time = 1;
+  google.protobuf.Duration game_time = 2;
+}
+
+message Segment {
+  string name = 1;
+  Time split_time = 2;
+  Time personal_best_split_time = 3;
+  Time best_segment_time = 4;
+}
+
+message Run {
+  string game_name = 1;
+  string run_category = 2;
+  uint32 attempt_count = 3;
+  string region = 4;
+  string platform = 5;
+  bool uses_emulator = 6;
+}
+
+service Server {
+  rpc StartOrSplit(StartOrSplitRequest) returns (StartOrSplitResponse);
+  rpc SkipSplit(SkipSplitRequest) returns (SkipSplitResponse);
+  rpc UnSplit(UnSplitRequest) returns (UnSplitResponse);
+
+  rpc Pause(PauseRequest) returns (PauseResponse); // Pause & UnPause
+  rpc Reset(ResetRequest) returns (ResetResponse);
+
+  rpc GetTime(GetTimeRequest) returns (GetTimeResponse);
+
+  rpc GetCurrentSegment(GetCurrentSegmentRequest) returns (GetCurrentSegmentResponse);
+  rpc FindSegment(FindSegmentRequest) returns (FindSegmentResponse);
+  rpc ListSegment(ListSegmentRequest) returns (ListSegmentResponse);
+
+  rpc GetRun(GetRunRequest) returns (GetRunResponse);
+
+  rpc GetCurrentComparisonMethod(GetCurrentComparisonMethodRequest) returns (GetCurrentComparisonMethodResponse);
+  rpc GetCurrentTimerPhase(GetCurrentTimerPhaseRequest) returns (GetCurrentTimerPhaseResponse);
+  rpc GetCurrentTimingMethod(GetCurrentTimingMethodRequest) returns (GetCurrentTimingMethodResponse);
+
+  rpc WatchTime(WatchTimeRequest) returns (stream WatchTimeResponse);
+  rpc WatchTimerPhase(WatchTimerPhaseRequest) returns (stream WatchTimerPhaseResponse);
+  rpc WatchSplit(WatchSplitRequest) returns (stream WatchSplitResponse);
+}
+
+message StartOrSplitRequest {}
+message StartOrSplitResponse {}
+
+message SkipSplitRequest {}
+message SkipSplitResponse {}
+
+message UnSplitRequest {}
+message UnSplitResponse {}
+
+message PauseRequest {}
+message PauseResponse {}
+
+message ResetRequest {}
+message ResetResponse {}
+
+message GetTimeRequest {}
+message GetTimeResponse {
+  Time time = 1;
+}
+
+message GetCurrentSegmentRequest {}
+message GetCurrentSegmentResponse {
+  Segment segment = 1;
+}
+
+message FindSegmentRequest {
+  string segment_name = 1;
+}
+message FindSegmentResponse {
+  Segment segment = 1;
+}
+
+message ListSegmentRequest {}
+message ListSegmentResponse {
+  repeated Segment segments = 1;
+}
+
+message GetRunRequest {}
+message GetRunResponse {
+  Run run = 1;
+}
+
+message GetCurrentComparisonMethodRequest {}
+message GetCurrentComparisonMethodResponse {
+  ComparisonMethod method = 1;
+}
+
+message GetCurrentTimerPhaseRequest {}
+message GetCurrentTimerPhaseResponse {
+  TimerPhase phase = 1;
+}
+
+message GetCurrentTimingMethodRequest {}
+message GetCurrentTimingMethodResponse {
+  TimingMethod method = 1;
+}
+
+message WatchTimeRequest {
+  google.protobuf.Duration refresh_rate = 1;
+}
+message WatchTimeResponse {
+  Time current_time = 1;
+}
+
+message WatchTimerPhaseRequest {}
+message WatchTimerPhaseResponse {
+  TimerPhase phase = 1;
+}
+
+message WatchSplitRequest {}
+message WatchSplitResponse {
+  Segment segment = 1;
+}
