@@ -22,6 +22,6 @@ namespace LiveSplit.UI.Components
 
         public string UpdateURL => "https://github.com/fuhrmannb/LiveSplit.Connect/releases";
 
-        public Version Version => Version.Parse("0.1.0");
+        public Version Version => Version.Parse("0.1.1");
     }
 }
