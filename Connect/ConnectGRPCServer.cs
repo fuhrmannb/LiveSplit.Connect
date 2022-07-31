@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -161,7 +162,7 @@ namespace LiveSplit.Connect
 
     public static class SegmentExtension
     {
-        public static Segment ToConnectSegment(this LiveSplit.Model.ISegment s)
+        public static Segment ToConnectSegment(this LiveSplit.Model.ISegment s, uint index)
         {
             return new Segment
             {
@@ -169,6 +170,7 @@ namespace LiveSplit.Connect
                 SplitTime = s.SplitTime.ToConnectTime(),
                 PersonalBestSplitTime = s.PersonalBestSplitTime.ToConnectTime(),
                 BestSegmentTime = s.BestSegmentTime.ToConnectTime(),
+                Index = index,
             };
         }
     }
@@ -249,18 +251,18 @@ namespace LiveSplit.Connect
         {
             return Task.FromResult(new GetCurrentSegmentResponse
             {
-                Segment = Model.CurrentState.CurrentSplit?.ToConnectSegment(),
+                Segment = Model.CurrentState.CurrentSplit?.ToConnectSegment((uint)(Model.CurrentState.CurrentSplitIndex)),
             });
         }
 
         public override Task<FindSegmentResponse> FindSegment(FindSegmentRequest request, ServerCallContext context)
         {
             Segment segment = null;
-            foreach (var s in Model.CurrentState.Run)
+            foreach (var s in Model.CurrentState.Run.Select((item, index) => (item, index)))
             {
-                if (s.Name.ToLower() == request.SegmentName.ToLower())
+                if (s.item.Name.ToLower() == request.SegmentName.ToLower())
                 {
-                    segment = s.ToConnectSegment();
+                    segment = s.item.ToConnectSegment((uint)(s.index));
                     break;
                 }
             }
@@ -270,9 +272,9 @@ namespace LiveSplit.Connect
         public override Task<ListSegmentResponse> ListSegment(ListSegmentRequest request, ServerCallContext context)
         {
             var response = new ListSegmentResponse();
-            foreach (var s in Model.CurrentState.Run)
+            foreach (var s in Model.CurrentState.Run.Select((item, index) => (item, index)))
             {
-                response.Segments.Add(s.ToConnectSegment());
+                response.Segments.Add(s.item.ToConnectSegment((uint)(s.index)));
             }
 
             return Task.FromResult(response);
@@ -354,21 +356,43 @@ namespace LiveSplit.Connect
 
         public override async Task WatchSplit(WatchSplitRequest request, IServerStreamWriter<WatchSplitResponse> responseStream, ServerCallContext context)
         {
-            async void splitHandler(object sender, EventArgs evt)
+            async void segmentUpdate(SplitAction action)
             {
                 // Skip first split, it's start of the run
                 if (Model.CurrentState.CurrentSplitIndex < 1) return;
+                int previousIndex = Model.CurrentState.CurrentSplitIndex - 1;
 
                 await responseStream.WriteAsync(new WatchSplitResponse
                 {
-                    Segment = Model.CurrentState.Run[Model.CurrentState.CurrentSplitIndex - 1].ToConnectSegment()
+                    Segment = Model.CurrentState.Run[previousIndex].ToConnectSegment((uint)previousIndex),
+                    Action = action,
                 });
             }
+
+            void splitHandler(object sender, EventArgs evt)
+            {
+                segmentUpdate(SplitAction.Split);
+            }
+
+            void skipHandler(object sender, EventArgs evt)
+            {
+                segmentUpdate(SplitAction.Skip);
+            }
+
+            void undoHandler(object sender, EventArgs evt)
+            {
+                segmentUpdate(SplitAction.Undo);
+            }
+
             Model.CurrentState.OnSplit += splitHandler;
+            Model.CurrentState.OnSkipSplit += skipHandler;
+            Model.CurrentState.OnUndoSplit += undoHandler;
 
             void unregisterHandlers()
             {
                 Model.CurrentState.OnSplit -= splitHandler;
+                Model.CurrentState.OnSkipSplit -= skipHandler;
+                Model.CurrentState.OnUndoSplit -= undoHandler;
             }
             context.CancellationToken.Register(unregisterHandlers);
 

@@ -38,6 +38,14 @@ message Segment {
   Time split_time = 2;
   Time personal_best_split_time = 3;
   Time best_segment_time = 4;
+  uint32 index = 5;
+}
+
+enum SplitAction {
+  SPLIT_ACTION_UNDEFINED = 0;
+  SPLIT = 1;
+  SKIP = 2;
+  UNDO = 3;
 }
 
 message Run {
@@ -146,4 +154,5 @@ message WatchTimerPhaseResponse {
 message WatchSplitRequest {}
 message WatchSplitResponse {
   Segment segment = 1;
+  SplitAction action = 2;
 }
