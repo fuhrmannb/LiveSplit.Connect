@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -338,13 +339,17 @@ namespace LiveSplit.Connect
             Model.CurrentState.OnReset += timerPhaseHandlerReset;
             Model.CurrentState.OnStart += timerPhaseHandler;
 
-            await context.CancellationToken;
+            void unregisterHandlers()
+            {
+                Model.CurrentState.OnPause -= timerPhaseHandler;
+                Model.CurrentState.OnResume -= timerPhaseHandler;
+                Model.CurrentState.OnUndoAllPauses -= timerPhaseHandler;
+                Model.CurrentState.OnReset -= timerPhaseHandlerReset;
+                Model.CurrentState.OnStart -= timerPhaseHandler;
+            }
+            context.CancellationToken.Register(unregisterHandlers);
 
-            Model.CurrentState.OnPause -= timerPhaseHandler;
-            Model.CurrentState.OnResume -= timerPhaseHandler;
-            Model.CurrentState.OnUndoAllPauses -= timerPhaseHandler;
-            Model.CurrentState.OnReset -= timerPhaseHandlerReset;
-            Model.CurrentState.OnStart -= timerPhaseHandler;
+            await context.CancellationToken;
         }
 
         public override async Task WatchSplit(WatchSplitRequest request, IServerStreamWriter<WatchSplitResponse> responseStream, ServerCallContext context)
@@ -361,9 +366,13 @@ namespace LiveSplit.Connect
             }
             Model.CurrentState.OnSplit += splitHandler;
 
-            await context.CancellationToken;
+            void unregisterHandlers()
+            {
+                Model.CurrentState.OnSplit -= splitHandler;
+            }
+            context.CancellationToken.Register(unregisterHandlers);
 
-            Model.CurrentState.OnSplit -= splitHandler;
+            await context.CancellationToken;
         }
     }
 }
