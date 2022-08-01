@@ -80,6 +80,7 @@ service Server {
   rpc WatchTime(WatchTimeRequest) returns (stream WatchTimeResponse);
   rpc WatchTimerPhase(WatchTimerPhaseRequest) returns (stream WatchTimerPhaseResponse);
   rpc WatchSplit(WatchSplitRequest) returns (stream WatchSplitResponse);
+  rpc WatchRun(WatchRunRequest) returns (stream WatchRunResponse);
 }
 
 message StartOrSplitRequest {}
@@ -155,4 +156,9 @@ message WatchSplitRequest {}
 message WatchSplitResponse {
   Segment segment = 1;
   SplitAction action = 2;
+}
+
+message WatchRunRequest{}
+message WatchRunResponse{
+  Run run = 1;
 }

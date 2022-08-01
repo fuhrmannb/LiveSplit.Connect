@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using LiveSplit.Model;
@@ -395,6 +395,35 @@ namespace LiveSplit.Connect
                 Model.CurrentState.OnUndoSplit -= undoHandler;
             }
             context.CancellationToken.Register(unregisterHandlers);
+
+            await context.CancellationToken;
+        }
+
+        public override async Task WatchRun(WatchRunRequest request, IServerStreamWriter<WatchRunResponse> responseStream, ServerCallContext context)
+        {
+            // FIXME: hack to watch Run variable from state.
+            // Didn't see any way to add event handler to watch global state or run change,
+            // so perform a regular check of the variable with a Timer.
+            IRun currentRun = Model.CurrentState.Run;
+
+            async void watchRunCallback(Object source, ElapsedEventArgs e)
+            {
+                if (currentRun != Model.CurrentState.Run)
+                {
+                    await responseStream.WriteAsync(new WatchRunResponse
+                    {
+                        Run = Model.CurrentState.Run.ToConnectRun(),
+                    });
+                }
+                currentRun = Model.CurrentState.Run;
+            }
+
+            Timer timer = new Timer(200);
+            timer.Elapsed += watchRunCallback;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+
+            context.CancellationToken.Register(timer.Dispose);
 
             await context.CancellationToken;
         }
