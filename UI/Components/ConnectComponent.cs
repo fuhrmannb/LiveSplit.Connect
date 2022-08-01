@@ -19,7 +19,7 @@ namespace LiveSplit.UI.Components
         public override string ComponentName => "LiveSplit Connect";
         public ConnectComponentSettings Settings { get; set; }
 
-        private LiveSplitState state;
+        private readonly LiveSplitState state;
         private Grpc.Core.Server gRPCServer;
         private bool serverStarted;
         private bool firstSetSettings;
