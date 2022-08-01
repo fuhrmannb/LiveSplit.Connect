@@ -1,31 +1,31 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
-package livesplit.connect;
+package livesplit.connect.v1;
 option csharp_namespace = "LiveSplit.Connect";
 
 import "google/protobuf/duration.proto";
 
 enum ComparisonMethod {
-  COMPARISON_METHOD_UNDEFINED = 0;
-  PERSONAL_BEST = 1;
-  BEST_SEGMENT = 2;
-  BEST_SPLIT_TIMES = 3;
-  AVERAGE_SEGMENTS = 4;
-  BALANCED_PB = 5;
+  COMPARISON_METHOD_UNSPECIFIED = 0;
+  COMPARISON_METHOD_PERSONAL_BEST = 1;
+  COMPARISON_METHOD_BEST_SEGMENT = 2;
+  COMPARISON_METHOD_BEST_SPLIT_TIMES = 3;
+  COMPARISON_METHOD_AVERAGE_SEGMENTS = 4;
+  COMPARISON_METHOD_BALANCED_PB = 5;
 }
 
 enum TimerPhase {
-  TIMER_PHASE_UNDEFINED = 0;
-  NOT_RUNNING = 1;
-  RUNNING = 2;
-  PAUSED = 3;
-  ENDED = 4;
+  TIMER_PHASE_UNSPECIFIED = 0;
+  TIMER_PHASE_NOT_RUNNING = 1;
+  TIMER_PHASE_RUNNING = 2;
+  TIMER_PHASE_PAUSED = 3;
+  TIMER_PHASE_ENDED = 4;
 }
 
 enum TimingMethod {
-  TIMING_METHOD_UNDEFINED = 0;
-  REAL_TIME = 1;
-  GAME_TIME = 2;
+  TIMING_METHOD_UNSPECIFIED = 0;
+  TIMING_METHOD_REAL_TIME = 1;
+  TIMING_METHOD_GAME_TIME = 2;
 }
 
 message Time {
@@ -42,10 +42,10 @@ message Segment {
 }
 
 enum SplitAction {
-  SPLIT_ACTION_UNDEFINED = 0;
-  SPLIT = 1;
-  SKIP = 2;
-  UNDO = 3;
+  SPLIT_ACTION_UNSPECIFIED = 0;
+  SPLIT_ACTION_SPLIT = 1;
+  SPLIT_ACTION_SKIP = 2;
+  SPLIT_ACTION_UNDO = 3;
 }
 
 message Run {
@@ -57,7 +57,7 @@ message Run {
   bool uses_emulator = 6;
 }
 
-service Server {
+service LiveSplitService {
   rpc StartOrSplit(StartOrSplitRequest) returns (StartOrSplitResponse);
   rpc SkipSplit(SkipSplitRequest) returns (SkipSplitResponse);
   rpc UnSplit(UnSplitRequest) returns (UnSplitResponse);

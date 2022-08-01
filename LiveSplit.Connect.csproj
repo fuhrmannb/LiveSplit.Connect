@@ -51,6 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="protobuf\livesplit\connect\livesplit.proto" />
+    <Protobuf Include="livesplit\connect\v1\livesplit.proto" />
   </ItemGroup>
 </Project>

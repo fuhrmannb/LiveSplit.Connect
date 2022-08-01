@@ -55,7 +55,7 @@ namespace LiveSplit.Connect
                     return ComparisonMethod.BalancedPb;
 
                 default:
-                    return ComparisonMethod.Undefined;
+                    return ComparisonMethod.Unspecified;
             }
         }
     }
@@ -77,7 +77,7 @@ namespace LiveSplit.Connect
             var duration = timespan.ToDuration();
             switch (timingMethod)
             {
-                case TimingMethod.Undefined:
+                case TimingMethod.Unspecified:
                     return null;
 
                 case TimingMethod.RealTime:
@@ -124,7 +124,7 @@ namespace LiveSplit.Connect
                     return TimerPhase.Paused;
 
                 default:
-                    return TimerPhase.Undefined;
+                    return TimerPhase.Unspecified;
             }
         }
     }
@@ -156,7 +156,7 @@ namespace LiveSplit.Connect
                 case LiveSplit.Model.TimingMethod.GameTime:
                     return TimingMethod.GameTime;
             }
-            return TimingMethod.Undefined;
+            return TimingMethod.Unspecified;
         }
     }
 
@@ -191,7 +191,7 @@ namespace LiveSplit.Connect
         }
     }
 
-    public class ConnectGRPCServer : Server.ServerBase
+    public class ConnectGRPCServer : LiveSplitService.LiveSplitServiceBase
     {
         private TimerModel Model { get; set; }
         private LiveSplitState State { get; set; }
