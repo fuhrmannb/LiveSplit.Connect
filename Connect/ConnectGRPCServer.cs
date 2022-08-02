@@ -232,7 +232,11 @@ namespace LiveSplit.Connect
 
         public override Task<PauseResponse> Pause(PauseRequest request, ServerCallContext context)
         {
-            Model.Pause();
+            // Avoid pause command to start timer if not started
+            if (Model.CurrentState.CurrentPhase != LiveSplit.Model.TimerPhase.NotRunning)
+            {
+                Model.Pause();
+            }
             return Task.FromResult(new PauseResponse());
         }
 
