@@ -43,6 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include=".github\workflows\linter.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
 
