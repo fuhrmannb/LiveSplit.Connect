@@ -1,4 +1,4 @@
-﻿# LiveSplit Connect
+# LiveSplit Connect
 
 LiveSplit Connect is a component for LiveSplit to access and control LiveSplit through an API.
 

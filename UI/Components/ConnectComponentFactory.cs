@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using LiveSplit.Model;
 using LiveSplit.UI.Components;
 
