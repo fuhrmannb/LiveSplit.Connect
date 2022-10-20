@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -324,19 +325,28 @@ namespace LiveSplit.Connect
 
         public override async Task WatchTimerPhase(WatchTimerPhaseRequest request, IServerStreamWriter<WatchTimerPhaseResponse> responseStream, ServerCallContext context)
         {
+            var lastPhase = Model.CurrentState.CurrentPhase.ToConnectTimerPhase();
+
+            async Task updateTimerPhase()
+            {
+                var newPhase = Model.CurrentState.CurrentPhase.ToConnectTimerPhase();
+                if (lastPhase != newPhase)
+                {
+                    lastPhase = newPhase;
+                    await responseStream.WriteAsync(new WatchTimerPhaseResponse
+                    {
+                        Phase = Model.CurrentState.CurrentPhase.ToConnectTimerPhase(),
+                    });
+                }
+            }
+
             async void timerPhaseHandler(object sender, EventArgs evt)
             {
-                await responseStream.WriteAsync(new WatchTimerPhaseResponse
-                {
-                    Phase = Model.CurrentState.CurrentPhase.ToConnectTimerPhase(),
-                });
+                await updateTimerPhase();
             }
             async void timerPhaseHandlerReset(object sender, LiveSplit.Model.TimerPhase phase)
             {
-                await responseStream.WriteAsync(new WatchTimerPhaseResponse
-                {
-                    Phase = Model.CurrentState.CurrentPhase.ToConnectTimerPhase(),
-                });
+                await updateTimerPhase();
             }
 
             Model.CurrentState.OnPause += timerPhaseHandler;
@@ -344,6 +354,8 @@ namespace LiveSplit.Connect
             Model.CurrentState.OnUndoAllPauses += timerPhaseHandler;
             Model.CurrentState.OnReset += timerPhaseHandlerReset;
             Model.CurrentState.OnStart += timerPhaseHandler;
+            Model.CurrentState.OnSplit += timerPhaseHandler;
+            Model.CurrentState.OnUndoSplit += timerPhaseHandler;
 
             void unregisterHandlers()
             {
@@ -352,6 +364,8 @@ namespace LiveSplit.Connect
                 Model.CurrentState.OnUndoAllPauses -= timerPhaseHandler;
                 Model.CurrentState.OnReset -= timerPhaseHandlerReset;
                 Model.CurrentState.OnStart -= timerPhaseHandler;
+                Model.CurrentState.OnSplit -= timerPhaseHandler;
+                Model.CurrentState.OnUndoSplit -= timerPhaseHandler;
             }
             context.CancellationToken.Register(unregisterHandlers);
 
