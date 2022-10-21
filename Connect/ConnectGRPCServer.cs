@@ -99,9 +99,11 @@ namespace LiveSplit.Connect
 
         public static LiveSplit.Connect.Time ToConnectTime(this LiveSplit.Model.Time livesplitTime)
         {
-            Time time = new Time();
-            time.RealTime = livesplitTime.RealTime.ToDuration();
-            time.GameTime = livesplitTime.GameTime.ToDuration();
+            Time time = new Time
+            {
+                RealTime = livesplitTime.RealTime.ToDuration(),
+                GameTime = livesplitTime.GameTime.ToDuration()
+            };
             return time;
         }
     }
