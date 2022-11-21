@@ -199,17 +199,30 @@ namespace LiveSplit.Connect
         private TimerModel Model { get; set; }
         private LiveSplitState State { get; set; }
 
-        public ConnectGRPCServer(LiveSplitState state)
+        private bool ReadOnly { get; set; }
+
+        public ConnectGRPCServer(LiveSplitState state, bool readOnly)
         {
             State = state;
             Model = new TimerModel
             {
                 CurrentState = State
             };
+            ReadOnly = readOnly;
+        }
+
+        private void ReadOnlyCheck()
+        {
+            if (ReadOnly)
+            {
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "API is in read-only mode"));
+            }
         }
 
         public override Task<StartOrSplitResponse> StartOrSplit(StartOrSplitRequest request, ServerCallContext context)
         {
+            ReadOnlyCheck();
+
             if (State.CurrentPhase == LiveSplit.Model.TimerPhase.Running)
             {
                 Model.Split();
@@ -223,18 +236,24 @@ namespace LiveSplit.Connect
 
         public override Task<SkipSplitResponse> SkipSplit(SkipSplitRequest request, ServerCallContext context)
         {
+            ReadOnlyCheck();
+
             Model.SkipSplit();
             return Task.FromResult(new SkipSplitResponse());
         }
 
         public override Task<UnSplitResponse> UnSplit(UnSplitRequest request, ServerCallContext context)
         {
+            ReadOnlyCheck();
+
             Model.UndoSplit();
             return Task.FromResult(new UnSplitResponse());
         }
 
         public override Task<PauseResponse> Pause(PauseRequest request, ServerCallContext context)
         {
+            ReadOnlyCheck();
+
             // Avoid pause command to start timer if not started
             if (Model.CurrentState.CurrentPhase != LiveSplit.Model.TimerPhase.NotRunning)
             {
@@ -245,6 +264,8 @@ namespace LiveSplit.Connect
 
         public override Task<ResetResponse> Reset(ResetRequest request, ServerCallContext context)
         {
+            ReadOnlyCheck();
+
             Model.Reset();
             return Task.FromResult(new ResetResponse());
         }

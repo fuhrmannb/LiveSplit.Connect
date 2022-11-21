@@ -60,7 +60,7 @@ namespace LiveSplit.UI.Components
             {
                 gRPCServer = new Grpc.Core.Server
                 {
-                    Services = { Connect.LiveSplitService.BindService(new ConnectGRPCServer(state)) },
+                    Services = { Connect.LiveSplitService.BindService(new ConnectGRPCServer(state, Settings.ReadOnly)) },
                     Ports = { new ServerPort(Settings.Host, Settings.Port, ServerCredentials.Insecure) },
                 };
                 try

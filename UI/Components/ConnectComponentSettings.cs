@@ -9,6 +9,7 @@ namespace LiveSplit.UI.Components
         public string Host { get; set; }
         public ushort Port { get; set; }
         public bool AutoStart { get; set; }
+        public bool ReadOnly { get; set; }
 
         public ConnectComponentSettings()
         {
@@ -17,10 +18,12 @@ namespace LiveSplit.UI.Components
             Host = "localhost";
             Port = 7592;
             AutoStart = false;
+            ReadOnly = true;
 
             bindTextBox.DataBindings.Add("Text", this, "Host", false, DataSourceUpdateMode.OnPropertyChanged);
             portNumericUpDown.DataBindings.Add("Value", this, "Port", false, DataSourceUpdateMode.OnPropertyChanged);
             autoStartCheckBox.DataBindings.Add("Checked", this, "AutoStart", false, DataSourceUpdateMode.OnPropertyChanged);
+            readOnlyCheckBox.DataBindings.Add("Checked", this, "ReadOnly", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         public XmlNode GetSettings(XmlDocument document)
@@ -36,6 +39,7 @@ namespace LiveSplit.UI.Components
             Host = SettingsHelper.ParseString(settings["Host"]);
             Port = (ushort)SettingsHelper.ParseInt(settings["Port"]);
             AutoStart = SettingsHelper.ParseBool(settings["AutoStart"]);
+            ReadOnly = SettingsHelper.ParseBool(settings["ReadOnly"]);
         }
 
         public int GetSettingsHashCode()
@@ -48,7 +52,8 @@ namespace LiveSplit.UI.Components
             return HashCode.Combine(
                 SettingsHelper.CreateSetting(document, parent, "Host", Host),
                 SettingsHelper.CreateSetting<int>(document, parent, "Port", Port),
-                SettingsHelper.CreateSetting(document, parent, "AutoStart", AutoStart)
+                SettingsHelper.CreateSetting(document, parent, "AutoStart", AutoStart),
+                SettingsHelper.CreateSetting(document, parent, "ReadOnly", ReadOnly)
             );
         }
     }

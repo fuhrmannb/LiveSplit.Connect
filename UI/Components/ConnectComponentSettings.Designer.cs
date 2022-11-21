@@ -1,4 +1,4 @@
-﻿
+
 namespace LiveSplit.UI.Components
 {
     partial class ConnectComponentSettings
@@ -38,6 +38,8 @@ namespace LiveSplit.UI.Components
             this.autoStartLabel = new System.Windows.Forms.Label();
             this.autoStartCheckBox = new System.Windows.Forms.CheckBox();
             this.connectComponentSettingsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.readOnlyCheckBox = new System.Windows.Forms.CheckBox();
+            this.readOnlyLabel = new System.Windows.Forms.Label();
             this.settingLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.portNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.connectComponentSettingsBindingSource)).BeginInit();
@@ -48,6 +50,8 @@ namespace LiveSplit.UI.Components
             this.settingLayoutPanel.ColumnCount = 2;
             this.settingLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.settingLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.settingLayoutPanel.Controls.Add(this.readOnlyLabel, 0, 3);
+            this.settingLayoutPanel.Controls.Add(this.readOnlyCheckBox, 0, 3);
             this.settingLayoutPanel.Controls.Add(this.bindLabel, 0, 0);
             this.settingLayoutPanel.Controls.Add(this.bindTextBox, 1, 0);
             this.settingLayoutPanel.Controls.Add(this.portLabel, 0, 1);
@@ -56,11 +60,12 @@ namespace LiveSplit.UI.Components
             this.settingLayoutPanel.Controls.Add(this.autoStartCheckBox, 1, 2);
             this.settingLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.settingLayoutPanel.Name = "settingLayoutPanel";
-            this.settingLayoutPanel.RowCount = 3;
+            this.settingLayoutPanel.RowCount = 4;
             this.settingLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.settingLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.settingLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.settingLayoutPanel.Size = new System.Drawing.Size(230, 78);
+            this.settingLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.settingLayoutPanel.Size = new System.Drawing.Size(230, 96);
             this.settingLayoutPanel.TabIndex = 0;
             // 
             // bindLabel
@@ -106,7 +111,7 @@ namespace LiveSplit.UI.Components
             // 
             this.autoStartLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.autoStartLabel.AutoSize = true;
-            this.autoStartLabel.Location = new System.Drawing.Point(3, 58);
+            this.autoStartLabel.Location = new System.Drawing.Point(3, 55);
             this.autoStartLabel.Name = "autoStartLabel";
             this.autoStartLabel.Size = new System.Drawing.Size(111, 13);
             this.autoStartLabel.TabIndex = 4;
@@ -116,11 +121,31 @@ namespace LiveSplit.UI.Components
             // 
             this.autoStartCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.autoStartCheckBox.AutoSize = true;
-            this.autoStartCheckBox.Location = new System.Drawing.Point(120, 58);
+            this.autoStartCheckBox.Location = new System.Drawing.Point(120, 55);
             this.autoStartCheckBox.Name = "autoStartCheckBox";
             this.autoStartCheckBox.Size = new System.Drawing.Size(15, 14);
             this.autoStartCheckBox.TabIndex = 5;
             this.autoStartCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // readOnlyCheckBox
+            // 
+            this.readOnlyCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.readOnlyCheckBox.AutoSize = true;
+            this.readOnlyCheckBox.Location = new System.Drawing.Point(120, 77);
+            this.readOnlyCheckBox.Name = "readOnlyCheckBox";
+            this.readOnlyCheckBox.Size = new System.Drawing.Size(15, 14);
+            this.readOnlyCheckBox.TabIndex = 6;
+            this.readOnlyCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // readOnlyLabel
+            // 
+            this.readOnlyLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.readOnlyLabel.AutoSize = true;
+            this.readOnlyLabel.Location = new System.Drawing.Point(3, 77);
+            this.readOnlyLabel.Name = "readOnlyLabel";
+            this.readOnlyLabel.Size = new System.Drawing.Size(57, 13);
+            this.readOnlyLabel.TabIndex = 7;
+            this.readOnlyLabel.Text = "Read Only";
             // 
             // ConnectComponentSettings
             // 
@@ -145,5 +170,7 @@ namespace LiveSplit.UI.Components
         private System.Windows.Forms.NumericUpDown portNumericUpDown;
         private System.Windows.Forms.Label autoStartLabel;
         private System.Windows.Forms.CheckBox autoStartCheckBox;
+        private System.Windows.Forms.CheckBox readOnlyCheckBox;
+        private System.Windows.Forms.Label readOnlyLabel;
     }
 }
